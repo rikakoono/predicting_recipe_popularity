@@ -42,6 +42,8 @@ Below are the columns from both datasets:
 These datasets offer a detailed look at the interplay between recipe characteristics, nutritional content, and user feedback, enabling insights into how people select and evaluate recipes based on nutritional data.
 
 
+<br>
+
 ## **Data Cleaning and Exploratory Data Analysis**
 
 ___
@@ -59,11 +61,11 @@ In order to find sentiment regarding a recipe, the average rating for each recip
 
 ![food.com review screenshot](./resource/food.com_review.png)
 
-Additionally, pandas implicitly excludes `NaN` values from mean calculation, making it ideal for making sure the general shape of the data is correct, even if the true evaluation of a review was not present.
+Additionally, pandas implicitly excludes `NaN` values from mean calculation, making it ideal for making sure the general shape of the data is correct, even if the true evaluation of a review was not present.  
 
-The following dataset is the result of merging average reviews back into the recipe dataset:
+The following dataset is the result of merging average reviews back into the recipe dataset:  
 
-`recipe_reviews.head()`
+`recipe_reviews.head()`  
 
 <div class="table-wrapper" markdown="block">
 
@@ -118,40 +120,55 @@ The dataset that will be used through this project is as follows:
 </div>
 Note: as aforementioned, calories are in cals, while other nutritional values are listed in percent daily value (PDV)
 
+<br>
+
 ### **Univariate Analysis**
 First, we examine the distribution of average ratings through a histogram, rounded to the nearest whole number. Looking at the graph, it can be noted that the average rating seems heavily skewed towards favorable ratings. 
 
 <iframe src="resources/univariate_1.html" width=800 height=600 frameBorder=0></iframe>
 
 Next, we examine distributions of our main three nutritional contents.  
+
+<br>
+
 #### `calories`
 Calories are most distributed around the 100-400 range, with the most frequent range being 165-174.9 calories. Even after extreme nutritional content was removed, the recipe with the highest calorie count seems to be over 10,000, which is 3 times the recommended average calorie intake amount.
 
 <iframe src="resources/univariate_2.html" width=800 height=600 frameBorder=0></iframe>
+
+<br>
 
 #### `sugar`
 Amount of sugar used in a recipe seems to skew heavily to the right, with a majority of recipes lying between 0-30% in percent daily value, and the highest frequency bin being between 0-4%. 
 
 <iframe src="resources/univariate_3.html" width=800 height=600 frameBorder=0></iframe>
 
+<br>
+
 #### `t_fat`
 Total fat is also skewed heavily to the right, with a huge tick in recipes listed as 0% daily value in fat.
 
 <iframe src="resources/univariate_4.html" width=800 height=600 frameBorder=0></iframe>
 
-
+<br>
 
 ### **Bivariate Analysis**
 After seeing trends in individual columns, bivariate analysis is conducted in order to understand interactions between different variables in the data.  
 In each of the plots below, the three nutritional values of interest were plotted against average ratings.
 
+<br>
+
 #### `calories`
 
 <iframe src="resources/biv_1.html" width=800 height=600 frameBorder=0></iframe>
 
+<br>
+
 #### `sugar`
 
 <iframe src="resources/biv_2.html" width=800 height=600 frameBorder=0></iframe>
+
+<br>
 
 #### `t_fat`
 
@@ -160,6 +177,7 @@ In each of the plots below, the three nutritional values of interest were plotte
 
 ### **Interesting Aggregates**
 
+<br>
 
 ## **Assessment of Missingness**
 
@@ -170,6 +188,8 @@ In the first modified DataFrame, `recipe_ratings`, there were three missing colu
 
 ### **Missingness Dependency: MCAR vs MAR** 
 For missingness analysis, we focus on `rating`. 7.08% of this column is missing values in the original interactions dataset, resulting in 3.1% of the average ratings being missing as well.  
+
+<br>
 
 #### Year of submission
 Because older recipes have more time to be seen, newer recipes have a higher chance of not yet having ratings. Therefore, `rating` is likely to be MAR based on `submitted`, or when the recipe was published on food.com. To analyze this, a new column, `year`, which takes only the year out of the submission date will be used for simplicity.
@@ -186,13 +206,15 @@ By calculating the TVD for the proportions of missing vs not missing values per 
 
 <iframe src="resources/missingness_dist.html" width=800 height=600 frameBorder=0></iframe>
 
-From this, it can be concluded that the missingness of `rating` is MAR on `submission`.
+From this, we find that the p-value of 0.000 and less than the significance level of 0.05, so it can be assumed that the missingness of `rating` is MAR on `submission`.  
+
+<br>
 
 #### Number of ingredients
 Recipes with larger numbers of ingredients may overwhelm users, which in turn would drive traffic away from a recipe and leave less users for review. Therefore, it should be tested if `rating` is MAR on `n_ingredients`.
 
 The hypotheses to analyze missingness of the `rating` column on `n_ingredients` are as follows:  
-**Null hypothesis**: The missingness of `rating` does not depend on any other columns.
+**Null hypothesis**: The missingness of `rating` does not depend on any other columns.  
 **Alternate Hypothesis**: The missingness of `rating` is dependent on `n_ingredients` with a significance level of 0.05.
 
 Similarly to `year`, through visualizing the distributions, the distributions of the missing ratings and non-missing ratings seem to be similar in shape but shifted; therefore, this test will also be conducted using TVD.
@@ -210,20 +232,25 @@ ___
 
 
 ### **Hypotheses**
-#### Null Hypothesis:
+##### Null Hypothesis: In the population, the mean rating is the same across groups of recipes with similar fat content, and any observed differences in our sample are due to random chance.
 
 
-#### Alternative Hypothesis:
+##### Alternative Hypothesis: In the population, the average rating differs across groups of recipes with similar fat contents.
 
 
 
 ### **Testing**
 
+In this test, the difference in average rating is being compared across recipes with different total fat content. Therefore, a permutation test is used to observe differences in sample distributions, to see if the distributions of ratings come from the same population. The significance level is set at the standard 0.05, for a confidence level of 95%.
+
+#### Test statistic: Difference in Means
+Because the distributions are non-normal, difference in means is an appropriate metric to summarize overall variation in ratings across different total fat content levels. The observed maximum difference in means was 0.9792.
 
 
 ### **Results**
+Upon running 10000 permutation tests, the p-value came out to be 0.1155. Since (0.1155 > 0.05), we fail to reject the null hypothesis.  
 
-
+<iframe src="resources/hypothesis_test.html" width=800 height=600 frameBorder=0></iframe>
 
 ## **Framing a Prediction Problem**
 
