@@ -1,3 +1,11 @@
+<style>
+
+.table-wrapper {
+    overflow-x: scroll;
+  }
+
+</style>
+
 # predicting_recipe_popularity
 
 ## **Introduction**
@@ -56,6 +64,7 @@ Additionally, pandas implicitly excludes `NaN` values from mean calculation, mak
 `recipe_reviews.head()`
 
 <div class="table-wrapper" markdown="block">
+
 | Name                           | ID     | Minutes | Contributor ID | Submitted   | Tags                                  | Nutrition                     | Steps | Steps Description                        | Description                        | Ingredients                              | Ingredients Count | Rating |
 |--------------------------------|---------|----------|----------------|-------------|---------------------------------------|--------------------------------|-------|------------------------------------------|------------------------------------|------------------------------------------|-------------------|--------|
 | 1 brownies in th...            | 333281  | 40       | 985201         | 2008-10-27  | [60-minutes-or-less, ...]             | [138.4, 10.0, 50...]          | 10    | [heat the oven to...]                   | these are the mo...               | [bittersweet chocolate, ...]            | 9                 | 4.0    |
