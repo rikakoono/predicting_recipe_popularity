@@ -59,7 +59,7 @@ Since this project does not require `name` and `description` information (recipe
 
 In order to find sentiment regarding a recipe, the average rating for each recipe is found through left merging the interactions dataset into the recipes dataset, to ensure all reviews being used are correlated to a currently existing recipe. All 0 values were replaced with `NaN`; this is because the lowest star rating that a recipe can be given is 1, implying missing or erroneous data rather than a true evaluation.
 
-![food.com review screenshot](./resource/food.com_review.png)
+![food.com review screenshot](./resources/food.com_review.png)
 
 Additionally, pandas implicitly excludes `NaN` values from mean calculation, making it ideal for making sure the general shape of the data is correct, even if the true evaluation of a review was not present.  
 
@@ -69,7 +69,7 @@ The following dataset is the result of merging average reviews back into the rec
 
 <div class="table-wrapper" markdown="block">
 
-| Name                           | ID     | Minutes | Contributor ID | Submitted   | Tags                                  | Nutrition                     | Steps | Steps Description                        | Description                        | Ingredients                              | Ingredients Count | Rating |
+| Name                           | ID     | Minutes | Contributor ID | Submitted   | Tags                                  | Nutrition                     | Steps | Steps Description                        | Description                        | Ingredients                              | Ingredients Count | Average Rating |
 |--------------------------------|---------|----------|----------------|-------------|---------------------------------------|--------------------------------|-------|------------------------------------------|------------------------------------|------------------------------------------|-------------------|--------|
 | 1 brownies in th...            | 333281  | 40       | 985201         | 2008-10-27  | [60-minutes-or-less, ...]             | [138.4, 10.0, 50...]          | 10    | [heat the oven to...]                   | these are the mo...               | [bittersweet chocolate, ...]            | 9                 | 4.0    |
 | 1 in canada choc...            | 453467  | 45       | 1848091        | 2011-04-11  | [60-minutes-or-less, ...]             | [595.1, 46.0, 21...]          | 12    | [pre-heat oven t...]                    | this is the reci...               | [white sugar, brown sugar, ...]         | 11                | 5.0    |
@@ -103,7 +103,7 @@ Looking into each column, it can be noted that there seems to be some recipes wh
 
 Examining a few sample recipes, there may be an issue with scaling. Therefore, we will treat "unrealistic" nutritional values as errors or outliers that may skew the general population, and cut out extreme recipes that exceed 1000% in daily value for any of the nutritional values.
 
-The dataset that will be used through this project is as follows:
+The dataset that will be used for hypothesis testing is as follows:
 
 `nutrition_reviews.head()`
 
@@ -129,21 +129,18 @@ First, we examine the distribution of average ratings through a histogram, round
 
 Next, we examine distributions of our main three nutritional contents.  
 
-<br>
 
 #### `calories`
 Calories are most distributed around the 100-400 range, with the most frequent range being 165-174.9 calories. Even after extreme nutritional content was removed, the recipe with the highest calorie count seems to be over 10,000, which is 3 times the recommended average calorie intake amount.
 
 <iframe src="resources/univariate_2.html" width=800 height=600 frameBorder=0></iframe>
 
-<br>
 
 #### `sugar`
 Amount of sugar used in a recipe seems to skew heavily to the right, with a majority of recipes lying between 0-30% in percent daily value, and the highest frequency bin being between 0-4%. 
 
 <iframe src="resources/univariate_3.html" width=800 height=600 frameBorder=0></iframe>
 
-<br>
 
 #### `t_fat`
 Total fat is also skewed heavily to the right, with a huge tick in recipes listed as 0% daily value in fat.
@@ -156,19 +153,16 @@ Total fat is also skewed heavily to the right, with a huge tick in recipes liste
 After seeing trends in individual columns, bivariate analysis is conducted in order to understand interactions between different variables in the data.  
 In each of the plots below, the three nutritional values of interest were plotted against average ratings.
 
-<br>
 
 #### `calories`
 
 <iframe src="resources/biv_1.html" width=800 height=600 frameBorder=0></iframe>
 
-<br>
 
 #### `sugar`
 
 <iframe src="resources/biv_2.html" width=800 height=600 frameBorder=0></iframe>
 
-<br>
 
 #### `t_fat`
 
@@ -184,19 +178,19 @@ In each of the plots below, the three nutritional values of interest were plotte
 ___
 
 ### **NMAR** 
-In the first modified DataFrame, `recipe_ratings`, there were three missing columns: `name`, `description`, and `rating`. 
+In the first modified DataFrame, `recipe_ratings`, there were three missing columns: `name`, `description`, and `average rating`. Of these, `description` is likely to be NMAR since users can choose to add a description to their recipes; recipes with more complicated descriptions may be more likely to be missing. This also means that it is likely that the missingness of `description` may be dependent on how complicated a recipe is.
 
 ### **Missingness Dependency: MCAR vs MAR** 
-For missingness analysis, we focus on `rating`. 7.08% of this column is missing values in the original interactions dataset, resulting in 3.1% of the average ratings being missing as well.  
+For missingness analysis, we focus on `average rating`. 7.08% of this column is missing values in the original interactions dataset, resulting in 3.1% of the average ratings being missing as well.  
 
 <br>
 
 #### Year of submission
-Because older recipes have more time to be seen, newer recipes have a higher chance of not yet having ratings. Therefore, `rating` is likely to be MAR based on `submitted`, or when the recipe was published on food.com. To analyze this, a new column, `year`, which takes only the year out of the submission date will be used for simplicity.
+Because older recipes have more time to be seen, newer recipes have a higher chance of not yet having ratings. Therefore, `average rating` is likely to be MAR based on `submitted`, or when the recipe was published on food.com. To analyze this, a new column, `year`, which takes only the year out of the submission date will be used for simplicity.
 
-The hypotheses to analyze missingness of the `rating` column on `year` are as follows:  
-**Null hypothesis**: The missingness of `rating` does not depend on any other columns.
-**Alternate Hypothesis**: The missingness of `rating` is dependent on `year` with a significance level of 0.05.
+The hypotheses to analyze missingness of the `average rating` column on `year` are as follows:  
+**Null hypothesis**: The missingness of `average rating` does not depend on any other columns.
+**Alternate Hypothesis**: The missingness of `average rating` is dependent on `year` with a significance level of 0.05.
 
 We begin by visualizing distributions of missingness of ratings by year. From the plot, it seems like the distributions are similar in shape, but newer ratings seem to be missing more often than not.
 
@@ -206,22 +200,22 @@ By calculating the TVD for the proportions of missing vs not missing values per 
 
 <iframe src="resources/missingness_dist.html" width=800 height=600 frameBorder=0></iframe>
 
-From this, we find that the p-value of 0.000 and less than the significance level of 0.05, so it can be assumed that the missingness of `rating` is MAR on `submission`.  
+From this, we find that the p-value of 0.000 and less than the significance level of 0.05, so it can be assumed that the missingness of `average rating` is MAR on `submission`.  
 
 <br>
 
 #### Number of ingredients
-Recipes with larger numbers of ingredients may overwhelm users, which in turn would drive traffic away from a recipe and leave less users for review. Therefore, it should be tested if `rating` is MAR on `n_ingredients`.
+Recipes with larger numbers of ingredients may overwhelm users, which in turn would drive traffic away from a recipe and leave less users for review. Therefore, it should be tested if `average rating` is MAR on `n_ingredients`.
 
-The hypotheses to analyze missingness of the `rating` column on `n_ingredients` are as follows:  
-**Null hypothesis**: The missingness of `rating` does not depend on any other columns.  
-**Alternate Hypothesis**: The missingness of `rating` is dependent on `n_ingredients` with a significance level of 0.05.
+The hypotheses to analyze missingness of the `average rating` column on `n_ingredients` are as follows:  
+**Null hypothesis**: The missingness of `average rating` does not depend on any other columns.  
+**Alternate Hypothesis**: The missingness of `average rating` is dependent on `n_ingredients` with a significance level of 0.05.
 
 Similarly to `year`, through visualizing the distributions, the distributions of the missing ratings and non-missing ratings seem to be similar in shape but shifted; therefore, this test will also be conducted using TVD.
 
 <iframe src="resources/missingness_bar_ing.html" width=800 height=600 frameBorder=0></iframe>
 
-When comparing missing vs non-missing values based on number of ingredients, a TVD of 0.04020 was found. However, with a p-values of 0.086, this does not meet the significance level of 0.05 that was needed to reject the null hypothesis, so it is likely that `rating` is MCAR on `n_ingredients`.
+When comparing missing vs non-missing values based on number of ingredients, a TVD of 0.04020 was found. However, with a p-values of 0.086, this does not meet the significance level of 0.05 that was needed to reject the null hypothesis, so it is likely that `average rating` is MCAR on `n_ingredients`.
 
 <iframe src="resources/missingness_dist_ing.html" width=800 height=600 frameBorder=0></iframe>
 
@@ -258,10 +252,37 @@ ___
 
 ### **Problem Identification**
 
+This model focuses on predicting recipe ratings, as it may be helpful for users to be able to quickly identify if they would enjoy a recipe or not before trying it out.  
+
+Given the heavily left-skewed distribution of ratings, where most average ratings fall between 4-5, and the goal of predicting a continuous variable `rating`, the most appropriate base model would be one that can handle regression with skewed data and non-linear relationships between features and `rating`.  
+While ratings themselves are categorical, the target variable of average ratings is narrow but continuous. A classifier would only predict fixed classes, and would be likely to only predict 4 or 5 as it would reduce error the most. Therefore, a regressor would be more appropriate over a classifier.
+
+In this project, the baseline model I will be using will be a **Random Forest Regressor**, which would help model complex relationships between different features, while handling skewness in feature and target variables well due to it not assuming normal distribution. 
+
+The following features were used: 
+- `minutes`
+- `contributor_id`
+- `submitted`
+- `tags`
+- `nutrition`
+- `avg_rating`
+
+The features were chosen based on how easy it is for users to come across this information even before reading the recipe.
 
 ## **Baseline Model**
 
 ___
+
+The initial baseline model was a Random Forest Regressor.  
+The qualitative variables used were:  
+- `contributor_id` (nominal) - use One Hot Encoding
+- `tags` (nominal) - explode tags into binary columns
+
+The quantitative variables used were:  
+- `minutes`
+- `submitted` - take out only the year for simplicity
+- `nutrition` - expand from list format into 7 individual columns 
+- `avg_rating`
 
 ## **Final Model**
 
